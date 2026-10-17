@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Modèle Cabinet Dentaire</title>
+<meta name="description" content="Cabinet dentaire : soins, prévention et prise de rendez-vous en ligne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap">
+<style>
+/* Mise en page : en-tête fixe, hero à deux colonnes (message + horaires du jour en direct),
+   liste de soins en lignes séparées, bande rendez-vous, infos pratiques, FAQ. */
+:root{
+  --bg:#F3F8F8; --surface:#FFFFFF; --surface-2:#E8F1F1;
+  --ink:#0E2629; --muted:#47625F; --line:#D2E1E1;
+  --accent-l:#0B7A75; --accent-d:#5CD6C8; --accent:var(--accent-l); --on-accent:#FFFFFF;
+  --ok:#1E7A46; --warn:#9A5B00; --danger:#B3261E;
+  --font-display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --font-body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1B1D; --surface:#122A2D; --surface-2:#173236;
+    --ink:#E7F2F1; --muted:#9DB8B6; --line:#264548;
+    --accent:var(--accent-d); --on-accent:#06201F;
+    --ok:#5FD08A; --warn:#F0B35A; --danger:#FF8E85; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1B1D; --surface:#122A2D; --surface-2:#173236;
+  --ink:#E7F2F1; --muted:#9DB8B6; --line:#264548;
+  --accent:var(--accent-d); --on-accent:#06201F;
+  --ok:#5FD08A; --warn:#F0B35A; --danger:#FF8E85; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:88px;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--font-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+h1,h2,h3{font-family:var(--font-display);margin:0;line-height:1.1;text-wrap:balance;letter-spacing:-.015em}
+h1{font-size:clamp(2.3rem,7.2vw,4.3rem);font-weight:700;letter-spacing:-.03em}
+h2{font-size:clamp(1.7rem,4.4vw,2.5rem);font-weight:700}
+h3{font-size:1.2rem;font-weight:600}
+p{margin:0}
+a{color:inherit}
+.wrap{width:min(1120px,100%);margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* En-tête */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;min-height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--font-display);font-weight:700;font-size:1.15rem;letter-spacing:-.01em;min-width:0}
+.brand span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brand svg{flex:none}
+.nav{display:flex;gap:22px;margin-left:auto;font-size:.95rem;font-weight:500}
+.nav a{text-decoration:none;color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+.top .btn{margin-left:auto}
+.nav + .btn{margin-left:0}
+@media (max-width:820px){.nav{display:none}.nav + .btn{margin-left:auto}}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:48px;padding:0 1.35em;border-radius:999px;font:600 1rem/1 var(--font-body);text-decoration:none;border:1.5px solid transparent;cursor:pointer;transition:filter .15s}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{border-color:var(--line);background:transparent;color:var(--ink)}
+.btn-ghost:hover{border-color:var(--accent)}
+.btn-sm{min-height:42px;padding:0 1.1em;font-size:.95rem}
+.btn[disabled]{opacity:.6;cursor:progress}
+
+/* Hero */
+.hero{position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.8fr);gap:48px;align-items:center;padding-block:clamp(40px,8vw,96px)}
+.hero-copy{display:grid;gap:22px;min-width:0}
+.hero-copy .lead{font-size:1.2rem;color:var(--muted);max-width:34em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.hero-arc{position:absolute;right:-6%;bottom:-70px;width:min(760px,90%);opacity:.14;pointer-events:none;color:var(--accent)}
+.today{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;display:grid;gap:16px;min-width:0}
+.status{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1.55rem;font-weight:700;letter-spacing:-.01em}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--ok);flex:none}
+.dot.closed{background:var(--warn)}
+.today .hrs{display:grid;gap:2px;font-variant-numeric:tabular-nums}
+.today .urg{font-size:.92rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr);gap:32px}}
+
+/* Sections */
+section{padding-block:clamp(48px,8vw,96px)}
+.sec-head{display:grid;gap:10px;margin-bottom:clamp(24px,4vw,44px);max-width:40em}
+.band{background:var(--surface-2)}
+.band-plain{background:var(--surface);border-block:1px solid var(--line)}
+
+/* Soins */
+.soins{list-style:none;margin:0;padding:0}
+.soins li{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.7fr) auto;gap:6px 36px;padding:22px 0;border-top:1px solid var(--line);align-items:baseline}
+.soins li:last-child{border-bottom:1px solid var(--line)}
+.soins h3{font-size:1.35rem}
+.soins p{color:var(--muted)}
+.price{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600;white-space:nowrap}
+@media (max-width:720px){.soins li{grid-template-columns:minmax(0,1fr)}}
+
+/* Parcours */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;counter-reset:s}
+.steps li{display:grid;gap:8px;counter-increment:s;align-content:start}
+.steps li::before{content:counter(s);font-family:var(--font-display);font-weight:700;font-size:2.4rem;line-height:1;color:var(--accent)}
+.steps p{color:var(--muted)}
+
+/* Équipe */
+.team{display:grid;gap:28px}
+.pro{display:grid;grid-template-columns:72px minmax(0,1fr);gap:20px;align-items:start}
+.mono{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:1.5rem;color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface))}
+.pro .role{font-size:.9rem;font-weight:600;color:var(--accent);margin-bottom:6px}
+.pro p.bio{color:var(--muted);max-width:44em}
+
+/* Formulaire */
+.rdv{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,5vw,64px);align-items:start}
+.rdv-intro{display:grid;gap:16px;min-width:0}
+.rdv-intro p{color:var(--muted)}
+.form-card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(20px,4vw,36px);min-width:0}
+form{display:grid;gap:24px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend,label.lbl{display:block;font-weight:600;font-size:.95rem;margin-bottom:8px;padding:0}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+input[type=text],input[type=tel],input[type=email],select,textarea{width:100%;min-height:48px;padding:10px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:96px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible{border-color:var(--accent);outline:3px solid color-mix(in srgb,var(--accent) 35%,transparent);outline-offset:0}
+[aria-invalid="true"]{border-color:var(--danger)!important}
+.err{color:var(--danger);font-size:.9rem;margin-top:6px}
+.hint{font-size:.9rem;color:var(--muted);margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative;display:block}
+.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chip span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);font-weight:500;font-variant-numeric:tabular-nums}
+.chip input:checked + span{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.chip input:focus-visible + span{outline:3px solid var(--accent);outline-offset:2px}
+.chip.day span{flex-direction:column;gap:0;min-width:66px;padding:8px 6px;line-height:1.15}
+.chip.day small{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
+.chip.day b{font-family:var(--font-display);font-size:1.35rem;font-weight:700}
+.check{display:grid;grid-template-columns:22px minmax(0,1fr);gap:12px;align-items:start;font-size:.92rem;color:var(--muted)}
+.check input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--accent)}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.banner{border-radius:12px;padding:14px 16px;font-size:.95rem;border:1px solid}
+.banner.err-b{border-color:color-mix(in srgb,var(--danger) 50%,var(--line));background:color-mix(in srgb,var(--danger) 10%,var(--surface));color:var(--ink)}
+.banner.info{border-color:color-mix(in srgb,var(--warn) 45%,var(--line));background:color-mix(in srgb,var(--warn) 10%,var(--surface))}
+.done{display:grid;gap:18px}
+.done dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 18px;margin:0;padding:18px 0;border-block:1px solid var(--line)}
+.done dt{color:var(--muted)}
+.done dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+.done .acts{display:flex;flex-wrap:wrap;gap:10px}
+@media (max-width:860px){.rdv{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.row{grid-template-columns:minmax(0,1fr)}}
+
+/* Infos */
+.infos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,5vw,64px)}
+.infos h3{margin-bottom:14px}
+.hours{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.hours th,.hours td{padding:10px 0;border-bottom:1px solid var(--line);text-align:left;font-weight:400;vertical-align:top}
+.hours td{text-align:right}
+.hours tr.now th,.hours tr.now td{font-weight:700;color:var(--accent)}
+.contact{display:grid;gap:22px;min-width:0}
+.contact dl{display:grid;gap:14px;margin:0}
+.contact dt{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.contact dd{margin:2px 0 0;overflow-wrap:anywhere}
+.contact a{text-underline-offset:3px}
+.urgence{border:1px solid color-mix(in srgb,var(--warn) 45%,var(--line));background:color-mix(in srgb,var(--warn) 10%,var(--surface));border-radius:14px;padding:16px 18px;font-size:.95rem}
+.pay{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.pay li{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.9rem;background:var(--surface)}
+@media (max-width:820px){.infos{grid-template-columns:minmax(0,1fr)}}
+
+/* FAQ */
+.faq{max-width:48em}
+details{border-top:1px solid var(--line)}
+details:last-child{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:20px 0;font-family:var(--font-display);font-size:1.15rem;font-weight:600}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:1.6rem;line-height:1;color:var(--accent);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 0 22px;color:var(--muted);max-width:40em}
+
+/* Pied de page */
+footer{background:var(--surface);border-top:1px solid var(--line);padding-block:36px calc(36px + env(safe-area-inset-bottom,0px))}
+.foot{display:grid;gap:20px;font-size:.92rem;color:var(--muted)}
+.foot-row{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;align-items:center}
+.legal{font-size:.88rem;color:var(--muted)}
+.legal summary{font-family:var(--font-body);font-size:.92rem;font-weight:600;padding:12px 0;color:var(--ink)}
+.legal div{display:grid;gap:10px;padding-bottom:16px;max-width:52em}
+.todo{background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 4px;border-radius:4px}
+
+/* Photo, logo */
+.hero-side{display:grid;gap:20px;min-width:0}
+.hero-photo{width:100%;max-width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:20px;border:1px solid var(--line)}
+#brand-mark{display:flex;flex:none;overflow:visible}
+.logo-img{height:34px;width:auto;max-width:160px;object-fit:contain}
+img.mono{object-fit:cover}
+
+/* Éditeur */
+.cz-open{position:fixed;z-index:40;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.cz-panel{position:fixed;z-index:41;right:env(safe-area-inset-right,0px);bottom:0;width:min(440px,100%);height:min(88vh,860px);display:flex;flex-direction:column;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px 20px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.28)}
+.cz-panel > header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.cz-panel h2{font-size:1.2rem}
+.cz-body{flex:1;min-height:0;overflow:auto;padding:4px 18px 16px;overscroll-behavior:contain}
+.cz-foot{display:grid;gap:8px;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
+.cz-actions{display:flex;flex-wrap:wrap;gap:8px}
+.cz-sec{border-top:0;border-bottom:1px solid var(--line)}
+.cz-sec:last-child{border-bottom:1px solid var(--line)}
+.cz-sec > summary{font-family:var(--font-body);font-size:1rem;font-weight:600;padding:14px 0}
+.cz-sec-body{display:grid;gap:12px;padding:2px 0 18px;min-width:0}
+.field{display:grid;gap:4px;min-width:0}
+.field label,.cz-panel .hl label{font-size:.88rem;font-weight:600}
+.cz-panel input[type=text],.cz-panel input[type=tel],.cz-panel input[type=email],.cz-panel input[type=time],.cz-panel select{min-height:42px}
+.cz-panel textarea{min-height:64px;font:inherit;font-size:.95rem}
+#cz-json,#cz-import{font:.8rem/1.4 ui-monospace,Menlo,Consolas,monospace}
+.cz-panel input[type=color]{width:64px;height:42px;padding:2px;border-radius:10px}
+.item{display:grid;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);min-width:0}
+.item-bar{display:flex;flex-wrap:wrap;gap:8px}
+.hours-ed{display:grid;gap:10px}
+.hday{display:grid;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.hl{display:flex;align-items:center;gap:10px}
+.hl input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent)}
+.hr{display:grid;grid-template-columns:76px minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;font-size:.9rem}
+.thumb{max-width:140px;max-height:90px;border-radius:8px;border:1px solid var(--line);object-fit:contain;background:var(--surface-2)}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{position:relative}
+.sw input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.sw span{display:block;width:40px;height:40px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1.5px var(--line)}
+.sw input:checked + span{box-shadow:0 0 0 3px var(--ink)}
+.sw input:focus-visible + span{outline:3px solid var(--accent);outline-offset:3px}
+.cz-note{font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Accueil"><span id="brand-mark"></span><span id="brand-name" data-c="nom">Cabinet dentaire</span></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="#soins" data-t="navSoins">Soins</a><a href="#visite" data-t="navVisite">Première visite</a><a href="#cabinet" data-t="navCabinet">Le cabinet</a><a href="#infos" data-t="navInfos">Infos pratiques</a><a href="#faq" data-t="navFaq">Questions</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="#rdv" data-t="navBouton">Prendre rendez-vous</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" style="padding:0">
+    <svg class="hero-arc" viewBox="0 0 760 240" aria-hidden="true"><path d="M20 40 Q380 300 740 40" fill="none" stroke="currentColor" stroke-width="46" stroke-linecap="round"/></svg>
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow"><span data-c="metier">Chirurgien-dentiste</span> · <span data-c="zone">La Réunion</span></p>
+        <h1 data-c="accroche">Prenez soin de votre sourire, sans attendre.</h1>
+        <p class="lead" data-c="intro"></p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#rdv" data-t="heroBouton">Demander un rendez-vous</a>
+          <a class="btn btn-ghost" data-tel href="#">Appeler</a>
+        </div>
+      </div>
+      <div class="hero-side"><img id="hero-photo" class="hero-photo" hidden alt="">
+      <aside class="today" aria-label="Horaires du jour">
+        <p class="eyebrow" data-t="aujourdhui">Aujourd'hui</p>
+        <div class="status"><span class="dot" id="dot"></span><span id="status-txt">…</span></div>
+        <p class="muted" id="status-sub"></p>
+        <div class="hrs" id="today-hrs"></div>
+        <p class="urg" data-tx="urgence"></p>
+      </aside></div>
+    </div>
+  </section>
+
+  <section id="soins">
+    <div class="wrap">
+      <div class="sec-head"><p class="eyebrow" data-t="soinsEyebrow">Nos soins</p><h2 data-t="soinsTitre">Des soins pour toute la famille</h2></div>
+      <ul class="soins" id="soins-list"></ul>
+    </div>
+  </section>
+
+  <section id="visite" class="band-plain">
+    <div class="wrap">
+      <div class="sec-head"><p class="eyebrow" data-t="visiteEyebrow">Première visite</p><h2 data-t="visiteTitre">Comment ça se passe</h2></div>
+      <ol class="steps" id="steps-list"></ol>
+    </div>
+  </section>
+
+  <section id="cabinet">
+    <div class="wrap">
+      <div class="sec-head"><p class="eyebrow" data-t="cabinetEyebrow">Le cabinet</p><h2 data-t="cabinetTitre">Qui vous accueille</h2></div>
+      <div class="team" id="team-list"></div>
+    </div>
+  </section>
+
+  <section id="rdv" class="band">
+    <div class="wrap rdv">
+      <div class="rdv-intro">
+        <p class="eyebrow" data-t="rdvEyebrow">Rendez-vous</p>
+        <h2 data-t="rdvTitre">Demandez votre rendez-vous en ligne</h2>
+        <p data-c="delaiReponse"></p>
+        <p data-tx="urgenceRdv"></p>
+      </div>
+      <div class="form-card">
+        <div id="form-zone">
+          <form id="rdv-form" novalidate>
+            <div>
+              <label class="lbl" for="f-motif">Motif de la visite</label>
+              <select id="f-motif" name="motif" required></select>
+            </div>
+            <fieldset>
+              <legend>Jour souhaité</legend>
+              <div class="chips" id="days" role="radiogroup" aria-label="Jour souhaité"></div>
+              <p class="err" id="e-jour" hidden></p>
+            </fieldset>
+            <fieldset id="slots-set" hidden>
+              <legend>Heure souhaitée</legend>
+              <div class="chips" id="slots" role="radiogroup" aria-label="Heure souhaitée"></div>
+              <p class="hint">Le cabinet confirme l'horaire exact avec vous.</p>
+            </fieldset>
+            <fieldset>
+              <legend>Êtes-vous déjà patient du cabinet ?</legend>
+              <div class="chips">
+                <label class="chip"><input type="radio" name="nouveau" value="Nouveau patient" checked><span>Nouveau patient</span></label>
+                <label class="chip"><input type="radio" name="nouveau" value="Déjà patient"><span>Déjà patient</span></label>
+              </div>
+            </fieldset>
+            <div class="row">
+              <div>
+                <label class="lbl" for="f-nom">Nom et prénom</label>
+                <input type="text" id="f-nom" name="nom" autocomplete="name" required>
+                <p class="err" id="e-nom" hidden></p>
+              </div>
+              <div>
+                <label class="lbl" for="f-tel">Téléphone</label>
+                <input type="tel" id="f-tel" name="tel" autocomplete="tel" inputmode="tel" required>
+                <p class="err" id="e-tel" hidden></p>
+              </div>
+            </div>
+            <div>
+              <label class="lbl" for="f-email">E-mail <span class="muted" style="font-weight:400">(facultatif)</span></label>
+              <input type="email" id="f-email" name="email" autocomplete="email">
+              <p class="err" id="e-email" hidden></p>
+            </div>
+            <div>
+              <label class="lbl" for="f-msg">Un message pour le cabinet <span class="muted" style="font-weight:400">(facultatif)</span></label>
+              <textarea id="f-msg" name="message" rows="3"></textarea>
+            </div>
+            <div class="sr" aria-hidden="true"><label for="f-site">Ne pas remplir</label><input type="text" id="f-site" name="site_web" tabindex="-1" autocomplete="off"></div>
+            <div>
+              <label class="check"><input type="checkbox" id="f-ok" name="consentement"><span>J'accepte que ces informations soient utilisées par le cabinet pour traiter ma demande de rendez-vous. <a href="#mentions" data-open="mentions">Données personnelles</a></span></label>
+              <p class="err" id="e-ok" hidden></p>
+            </div>
+            <div id="form-banner" hidden></div>
+            <div style="display:grid;gap:10px">
+              <button class="btn btn-primary" type="submit" id="f-submit">Envoyer ma demande</button>
+              <p class="hint" id="demo-hint" hidden></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="infos">
+    <div class="wrap infos">
+      <div>
+        <h3 data-t="horairesTitre">Horaires d'ouverture</h3>
+        <table class="hours"><tbody id="hours-table"></tbody></table>
+      </div>
+      <div class="contact">
+        <dl>
+          <div><dt>Adresse</dt><dd><span data-c="adresse"></span><br><a id="maps-link" target="_blank" rel="noopener" href="#">Voir l'itinéraire</a></dd></div>
+          <div><dt>Accès</dt><dd data-c="acces"></dd></div>
+          <div><dt>Téléphone</dt><dd><a data-tel href="#"></a></dd></div>
+          <div><dt>E-mail</dt><dd><a data-mail href="#"></a></dd></div>
+        </dl>
+        <div><p class="eyebrow" style="margin-bottom:10px" data-t="paiementTitre">Paiement et prise en charge</p><ul class="pay" id="pay-list"></ul></div>
+        <div class="urgence" data-t="urgenceVitale"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="band-plain">
+    <div class="wrap">
+      <div class="sec-head"><p class="eyebrow" data-t="faqEyebrow">Questions fréquentes</p><h2 data-t="faqTitre">Vos questions</h2></div>
+      <div class="faq" id="faq-list"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-row">
+      <strong data-c="nom"></strong>
+      <span><span data-c="adresse"></span> · <a data-tel href="#"></a></span>
+    </div>
+    <details class="legal" id="mentions">
+      <summary>Mentions légales et données personnelles</summary>
+      <div id="legal-body"></div>
+    </details>
+  </div>
+</footer>
+
+<aside id="cz" hidden>
+  <button class="btn btn-primary cz-open" id="cz-open" type="button" aria-expanded="false" aria-controls="cz-panel">Personnaliser</button>
+  <div class="cz-panel" id="cz-panel" role="dialog" aria-label="Modifier le site" hidden>
+    <header><h2>Modifier le site</h2><button class="btn btn-ghost btn-sm" id="cz-close" type="button">Fermer</button></header>
+    <div class="cz-body" id="cz-body"></div>
+    <div class="cz-foot">
+      <p class="cz-note" id="cz-msg" role="status">Vos modifications apparaissent tout de suite et restent dans ce navigateur. Pour les publier, téléchargez le site.</p>
+      <div class="cz-actions"><button class="btn btn-primary btn-sm" id="cz-save" type="button">Télécharger le site modifié</button><button class="btn btn-ghost btn-sm" id="cz-reset" type="button">Tout réinitialiser</button></div>
+    </div>
+  </div>
+</aside>
+
+<script>
+const ORIGINAL_HTML = "<!doctype html>\n" + document.documentElement.outerHTML;
+/* =====================================================================
+   CONFIGURATION : tout ce qui change d'un cabinet à l'autre est ici.
+   Pour livrer un site client : remplacez les valeurs, puis mettez
+   personnalisation: false.
+   ===================================================================== */
+/*CONFIG_START*/
+const CONFIG = {
+  editeur: "visible",
+  textes: {
+    navSoins: "Soins", navVisite: "Première visite", navCabinet: "Le cabinet", navInfos: "Infos pratiques", navFaq: "Questions",
+    navBouton: "Prendre rendez-vous", heroBouton: "Demander un rendez-vous", boutonAppel: "Appeler le {tel}",
+    aujourdhui: "Aujourd'hui", urgence: "Urgence dentaire : appelez le {tel} en précisant que c'est urgent.",
+    soinsEyebrow: "Nos soins", soinsTitre: "Des soins pour toute la famille",
+    visiteEyebrow: "Première visite", visiteTitre: "Comment ça se passe",
+    cabinetEyebrow: "Le cabinet", cabinetTitre: "Qui vous accueille",
+    rdvEyebrow: "Rendez-vous", rdvTitre: "Demandez votre rendez-vous en ligne",
+    urgenceRdv: "Pour une urgence, appelez directement le {tel}.",
+    horairesTitre: "Horaires d'ouverture", paiementTitre: "Paiement et prise en charge",
+    urgenceVitale: "En cas d'urgence vitale (gonflement important du visage, difficulté à respirer ou à avaler), appelez le 15.",
+    faqEyebrow: "Questions fréquentes", faqTitre: "Vos questions"
+  },
+  sections: { soins: true, visite: true, cabinet: true, faq: true },
+  logo: "", logoSeul: false, photo: "", accentCustom: "",
+  nom: "Cabinet dentaire",
+  metier: "Chirurgien-dentiste",
+  zone: "La Réunion",
+  fuseau: "Indian/Reunion",
+  accroche: "Prenez soin de votre sourire, sans attendre.",
+  intro: "Consultations, soins et prévention pour toute la famille, dans un cabinet à taille humaine. Demandez un rendez-vous en ligne en moins d'une minute.",
+  delaiReponse: "Le cabinet vous contacte par téléphone ou par e-mail pour confirmer l'horaire de votre rendez-vous.",
+  tel: "02 62 00 00 00",
+  email: "contact@cabinet.example",
+  adresse: "Numéro et rue, code postal, ville",
+  acces: "Indiquez ici le stationnement, les transports et l'accessibilité aux personnes à mobilité réduite.",
+  accent: "lagon",
+  formEndpoint: "",
+  creneauMinutes: 30,
+  horaires: {
+    lun: ["08:00-12:00", "13:30-17:30"],
+    mar: ["08:00-12:00", "13:30-17:30"],
+    mer: ["08:00-12:00", "13:30-17:30"],
+    jeu: ["08:00-12:00", "13:30-17:30"],
+    ven: ["08:00-12:00", "13:30-16:30"],
+    sam: ["08:00-12:00"],
+    dim: []
+  },
+  soins: [
+    { nom: "Consultation et prévention", texte: "Bilan bucco-dentaire complet, conseils d'hygiène et dépistage précoce. Un contrôle au moins une fois par an est recommandé.", prix: "" },
+    { nom: "Détartrage et hygiène", texte: "Élimination du tartre et de la plaque pour protéger les gencives et garder une bonne haleine.", prix: "" },
+    { nom: "Soins des caries", texte: "Traitement des caries et reconstitution de la dent pour retrouver confort et solidité.", prix: "" },
+    { nom: "Prothèses", texte: "Couronnes, bridges et prothèses amovibles pour remplacer ou restaurer les dents abîmées.", prix: "" },
+    { nom: "Implants", texte: "Remplacement durable d'une ou plusieurs dents manquantes, après étude de votre situation.", prix: "" },
+    { nom: "Orthodontie et alignement", texte: "Solutions pour aligner les dents, chez l'enfant comme chez l'adulte.", prix: "" },
+    { nom: "Blanchiment", texte: "Éclaircissement des dents, encadré par le praticien.", prix: "" },
+    { nom: "Urgences dentaires", texte: "Douleur, dent cassée ou perdue : contactez le cabinet pour être pris en charge au plus vite.", prix: "" }
+  ],
+  parcours: [
+    { titre: "Votre demande", texte: "Vous choisissez un motif et un créneau souhaité. Cela prend moins d'une minute." },
+    { titre: "Confirmation", texte: "Le cabinet vous contacte pour confirmer l'horaire ou vous en proposer un autre." },
+    { titre: "Bilan et explications", texte: "Le praticien examine, explique ce qu'il observe et répond à vos questions." },
+    { titre: "Plan de soins et devis", texte: "Si des soins sont nécessaires, vous recevez un plan de traitement et un devis avant de commencer." }
+  ],
+  equipe: [
+    { nom: "Dr Prénom Nom", titre: "Chirurgien-dentiste", bio: "Présentez ici le parcours, les spécialités et l'approche du praticien." }
+  ],
+  paiements: ["Carte Vitale", "Tiers payant", "Mutuelles", "Carte bancaire", "Espèces", "Chèque"],
+  faq: [
+    { q: "À quelle fréquence consulter le dentiste ?", r: "Un contrôle au moins une fois par an est conseillé, plus souvent si votre praticien le recommande (gencives fragiles, soins en cours, appareil dentaire)." },
+    { q: "J'ai mal, que faire ?", r: "Appelez le cabinet dès l'ouverture en précisant que c'est urgent. En cas de gonflement important du visage, de fièvre ou de difficulté à respirer ou à avaler, appelez le 15." },
+    { q: "Quels moyens de paiement, quelle prise en charge ?", r: "Les moyens de paiement acceptés sont indiqués dans la section Infos pratiques. Un devis est remis avant les soins importants et vous pouvez le présenter à votre mutuelle." },
+    { q: "Comment annuler ou déplacer un rendez-vous ?", r: "Prévenez le cabinet par téléphone dès que possible : le créneau pourra être proposé à un autre patient." }
+  ],
+  legal: { raisonSociale: "", ordre: "", rpps: "", siret: "", hebergeur: "", directeurPublication: "" }
+};
+/*CONFIG_END*/
+const DEFAULTS = JSON.parse(JSON.stringify(CONFIG));
+const BASE_HASH = hashStr(JSON.stringify(CONFIG));
+let uid = 0, exportMode = "cache";
+
+const ACCENTS = [
+  { id: "lagon",  nom: "Lagon",  l: "#0B7A75", d: "#5CD6C8" },
+  { id: "ocean",  nom: "Océan",  l: "#1D4E89", d: "#8DB8F2" },
+  { id: "foret",  nom: "Forêt",  l: "#2F6B3A", d: "#8FD69B" },
+  { id: "corail", nom: "Corail", l: "#B0432B", d: "#F4A590" },
+  { id: "prune",  nom: "Prune",  l: "#6B3A7A", d: "#D6AAE6" }
+];
+
+/*PURE_START*/
+const KEYS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
+const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+const SCHEMA_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const pad = n => String(n).padStart(2, "0");
+
+function parseRange(s) {
+  const m = /^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})$/.exec(String(s).trim());
+  if (!m) return null;
+  const a = +m[1] * 60 + +m[2], b = +m[3] * 60 + +m[4];
+  return b > a ? [a, b] : null;
+}
+function fmtHM(min) {
+  const h = Math.floor(min / 60), m = min % 60;
+  return m ? h + "h" + pad(m) : h + "h";
+}
+function clinicNow(tz, d) {
+  d = d || new Date();
+  const opts = { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" };
+  let parts;
+  try { parts = new Intl.DateTimeFormat("en-GB", Object.assign({ timeZone: tz }, opts)).formatToParts(d); }
+  catch (e) { parts = new Intl.DateTimeFormat("en-GB", opts).formatToParts(d); }
+  const g = t => +parts.find(x => x.type === t).value;
+  const y = g("year"), m = g("month"), day = g("day");
+  const dow = new Date(Date.UTC(y, m - 1, day)).getUTCDay();
+  return { y, m, d: day, dow, min: (g("hour") % 24) * 60 + g("minute"), iso: y + "-" + pad(m) + "-" + pad(day) };
+}
+function rangesOf(h, dow) {
+  return ((h && h[KEYS[dow]]) || []).map(parseRange).filter(Boolean);
+}
+function statusAt(now, h) {
+  const r = rangesOf(h, now.dow);
+  for (const [a, b] of r) if (now.min >= a && now.min < b) return { open: true, until: b };
+  const later = r.find(x => x[0] > now.min);
+  if (later) return { open: false, next: { offset: 0, at: later[0], dow: now.dow } };
+  for (let i = 1; i <= 7; i++) {
+    const dow = (now.dow + i) % 7, rr = rangesOf(h, dow);
+    if (rr.length) return { open: false, next: { offset: i, at: rr[0][0], dow } };
+  }
+  return { open: false, next: null };
+}
+function creneaux(ranges, step, from) {
+  const out = [];
+  for (const rg of ranges) {
+    const p = typeof rg === "string" ? parseRange(rg) : rg;
+    if (!p) continue;
+    for (let t = p[0]; t + step <= p[1]; t += step) if (t >= (from || 0)) out.push(t);
+  }
+  return out;
+}
+function openDays(now, h, n, step, lead) {
+  const out = [];
+  for (let i = 0; i < 60 && out.length < n; i++) {
+    const date = new Date(Date.UTC(now.y, now.m - 1, now.d + i));
+    const dow = date.getUTCDay();
+    const slots = creneaux(rangesOf(h, dow), step, i === 0 ? now.min + lead : 0);
+    if (slots.length) out.push({ iso: date.toISOString().slice(0, 10), dow, offset: i, date, slots });
+  }
+  return out;
+}
+function initials(nom) {
+  const w = String(nom || "").replace(/^(dr\.?|docteur|pr\.?|professeur)\s+/i, "").split(/\s+/).filter(Boolean);
+  return ((w[0] || "?")[0] + (w[1] ? w[1][0] : "")).toUpperCase();
+}
+function validTel(s) {
+  const t = String(s || "").trim(), digits = t.replace(/\D/g, "");
+  return /^[+\d][\d\s.()-]*$/.test(t) && digits.length >= 9 && digits.length <= 13;
+}
+function validEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || "").trim()); }
+function telHref(s) { return "tel:" + String(s || "").replace(/[^\d+]/g, ""); }
+function jsonLd(c) {
+  const spec = [];
+  KEYS.forEach((k, dow) => (c.horaires[k] || []).forEach(s => {
+    const [a, b] = s.split("-");
+    if (parseRange(s)) spec.push({ "@type": "OpeningHoursSpecification", dayOfWeek: SCHEMA_DAYS[dow], opens: a.padStart(5, "0"), closes: b.padStart(5, "0") });
+  }));
+  return { "@context": "https://schema.org", "@type": "Dentist", name: c.nom, telephone: c.tel, email: c.email,
+    address: { "@type": "PostalAddress", streetAddress: c.adresse, addressRegion: c.zone }, openingHoursSpecification: spec };
+}
+function hexToRgb(h) { const m = /^#?([0-9a-f]{6})$/i.exec(String(h || "").trim()); if (!m) return null; const n = parseInt(m[1], 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function rgbToHex(c) { return "#" + c.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join(""); }
+function lum(c) { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); }
+function contrast(a, b) { const A = lum(a), B = lum(b); return (Math.max(A, B) + 0.05) / (Math.min(A, B) + 0.05); }
+function adjust(hex, bgHex, min, toward) {
+  const c = hexToRgb(hex), bg = hexToRgb(bgHex); if (!c || !bg) return null;
+  const t = toward === "black" ? [0, 0, 0] : [255, 255, 255];
+  for (let i = 0; i <= 20; i++) { const k = i / 20, mix = c.map((v, j) => v + (t[j] - v) * k); if (contrast(mix, bg) >= min) return rgbToHex(mix); }
+  return rgbToHex(t);
+}
+function hashStr(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(16); }
+function cfgReplace(html, cfg) {
+  const S = "/*CONFIG_" + "START*/", E = "/*CONFIG_" + "END*/";
+  const a = html.indexOf(S), b = a < 0 ? -1 : html.indexOf(E, a);
+  if (a < 0 || b < 0) return null;
+  return html.slice(0, a) + S + "\nconst CONFIG = " + JSON.stringify(cfg, null, 2).replace(/</g, "\\u003c") + ";\n" + html.slice(b);
+}
+function moveItem(arr, i, d) { const j = i + d; if (j < 0 || j >= arr.length) return arr; const c = arr.slice(); [c[i], c[j]] = [c[j], c[i]]; return c; }
+function hoursToRanges(v) { const out = []; for (let i = 0; i + 1 < v.length; i += 2) { const r = v[i] + "-" + v[i + 1]; if (v[i] && v[i + 1] && parseRange(r)) out.push(r); } return out; }
+function rangesToFields(arr) { const f = ["", "", "", ""]; (arr || []).slice(0, 2).forEach((s, i) => { const p = String(s).split("-"); f[i * 2] = (p[0] || "").padStart(5, "0"); f[i * 2 + 1] = (p[1] || "").padStart(5, "0"); }); return f; }
+/*PURE_END*/
+
+/* ---------------- Rendu ---------------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const STORE_KEY = "modele-dentiste-config-v1";
+let state = { jour: null, creneau: "", days: [] };
+
+const BRAND_SVG = '<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="var(--accent)"/><path d="M6.5 12 Q15 24 23.5 12" fill="none" stroke="var(--on-accent)" stroke-width="3" stroke-linecap="round"/></svg>';
+function T(key) { const v = CONFIG.textes && CONFIG.textes[key]; return v != null ? v : (DEFAULTS.textes[key] || ""); }
+function withTel(t) { return esc(t).replace("{tel}", '<a href="' + telHref(CONFIG.tel) + '">' + esc(CONFIG.tel) + "</a>"); }
+function applyAccent() {
+  let l, d;
+  if (CONFIG.accent === "perso" && hexToRgb(CONFIG.accentCustom)) {
+    l = adjust(CONFIG.accentCustom, "#FFFFFF", 4.5, "black");
+    d = adjust(CONFIG.accentCustom, "#122A2D", 4.5, "white");
+  } else {
+    const p = ACCENTS.find(a => a.id === CONFIG.accent) || ACCENTS[0]; l = p.l; d = p.d;
+  }
+  document.documentElement.style.setProperty("--accent-l", l);
+  document.documentElement.style.setProperty("--accent-d", d);
+}
+function renderText() {
+  $$("[data-c]").forEach(el => { el.textContent = CONFIG[el.dataset.c] || ""; });
+  $$("[data-t]").forEach(el => { el.textContent = T(el.dataset.t); });
+  $$("[data-tx]").forEach(el => { el.innerHTML = withTel(T(el.dataset.tx)); });
+  $$("[data-tel]").forEach(el => { el.href = telHref(CONFIG.tel); el.textContent = el.classList.contains("btn") ? T("boutonAppel").replace("{tel}", CONFIG.tel) : CONFIG.tel; });
+  $$("[data-mail]").forEach(el => { el.href = "mailto:" + CONFIG.email; el.textContent = CONFIG.email; });
+  $("#maps-link").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.adresse);
+  document.title = CONFIG.nom + " · " + CONFIG.metier + " · " + CONFIG.zone;
+  const md = $('meta[name="description"]');
+  if (md) md.content = CONFIG.nom + " : soins dentaires, prévention et prise de rendez-vous en ligne. " + CONFIG.zone + ".";
+}
+function renderSections() {
+  [["soins", "#soins"], ["visite", "#visite"], ["cabinet", "#cabinet"], ["faq", "#faq"]].forEach(([k, sel]) => {
+    const on = CONFIG.sections[k] !== false;
+    $(sel).hidden = !on;
+    $$('.nav a[href="' + sel + '"]').forEach(a => { a.hidden = !on; });
+  });
+}
+function renderMedia() {
+  $("#brand-mark").innerHTML = CONFIG.logo ? '<img class="logo-img" src="' + esc(CONFIG.logo) + '" alt="">' : BRAND_SVG;
+  $("#brand-name").hidden = !!(CONFIG.logo && CONFIG.logoSeul);
+  const ph = $("#hero-photo"); ph.hidden = !CONFIG.photo;
+  if (CONFIG.photo) { ph.src = CONFIG.photo; ph.alt = CONFIG.nom; }
+}
+function updateLd() {
+  let s = $("#ld-json");
+  if (!s) { s = document.createElement("script"); s.type = "application/ld+json"; s.id = "ld-json"; document.head.appendChild(s); }
+  s.textContent = JSON.stringify(jsonLd(CONFIG));
+}
+function refreshAll(o) {
+  o = o || {};
+  applyAccent(); renderText(); renderSections(); renderMedia(); renderLists(); renderHours(); renderStatus();
+  if (o.motifs) renderMotifs();
+  if (o.days) renderDays();
+  updateLd(); setHintDemo();
+}
+function renderLists() {
+  $("#soins-list").innerHTML = CONFIG.soins.map(s =>
+    `<li><h3>${esc(s.nom)}</h3><p>${esc(s.texte)}</p>${s.prix ? `<span class="price">${esc(s.prix)}</span>` : "<span></span>"}</li>`).join("");
+  $("#steps-list").innerHTML = CONFIG.parcours.map(s => `<li><h3>${esc(s.titre)}</h3><p>${esc(s.texte)}</p></li>`).join("");
+  $("#team-list").innerHTML = CONFIG.equipe.map(p =>
+    `<div class="pro">${p.photo ? `<img class="mono" src="${esc(p.photo)}" alt="">` : `<div class="mono" aria-hidden="true">${esc(initials(p.nom))}</div>`}<div><h3>${esc(p.nom)}</h3><p class="role">${esc(p.titre)}</p><p class="bio">${esc(p.bio)}</p></div></div>`).join("");
+  $("#pay-list").innerHTML = CONFIG.paiements.map(p => `<li>${esc(p)}</li>`).join("");
+  const open = $$("#faq-list details").filter(d => d.open).map(d => d.dataset.i);
+  $("#faq-list").innerHTML = CONFIG.faq.map((f, i) =>
+    `<details data-i="${i}"${open.includes(String(i)) ? " open" : ""}><summary>${esc(f.q)}</summary><p>${esc(f.r)}</p></details>`).join("");
+  const L = CONFIG.legal, td = v => v ? esc(v) : '<span class="todo">à compléter</span>';
+  $("#legal-body").innerHTML =
+    `<p><strong>Éditeur du site.</strong> ${esc(CONFIG.nom)}, ${esc(CONFIG.adresse)}. Raison sociale : ${td(L.raisonSociale)}. SIRET : ${td(L.siret)}. Directeur de la publication : ${td(L.directeurPublication)}.</p>` +
+    `<p><strong>Profession réglementée.</strong> Chirurgien-dentiste, inscrit à l'Ordre : ${td(L.ordre)}. N° RPPS : ${td(L.rpps)}.</p>` +
+    `<p><strong>Hébergement.</strong> ${td(L.hebergeur)}.</p>` +
+    `<p><strong>Données personnelles.</strong> Les informations saisies dans le formulaire de rendez-vous (nom, téléphone, e-mail, message) sont utilisées uniquement par le cabinet pour traiter votre demande. Elles ne sont ni vendues ni utilisées à d'autres fins. Vous pouvez demander leur accès, leur rectification ou leur suppression en écrivant à ${esc(CONFIG.email)}. Ne transmettez pas d'informations de santé détaillées dans le message : réservez-les à l'échange avec le praticien.</p>`;
+}
+function renderHours() {
+  const now = clinicNow(CONFIG.fuseau);
+  const order = [1, 2, 3, 4, 5, 6, 0];
+  $("#hours-table").innerHTML = order.map(dow => {
+    const r = rangesOf(CONFIG.horaires, dow);
+    const txt = r.length ? r.map(x => fmtHM(x[0]) + " – " + fmtHM(x[1])).join("<br>") : "Fermé";
+    return `<tr${dow === now.dow ? ' class="now" aria-current="date"' : ""}><th scope="row">${JOURS[dow][0].toUpperCase() + JOURS[dow].slice(1)}</th><td>${txt}</td></tr>`;
+  }).join("");
+}
+function renderStatus() {
+  const now = clinicNow(CONFIG.fuseau), st = statusAt(now, CONFIG.horaires);
+  const dot = $("#dot"), txt = $("#status-txt"), sub = $("#status-sub");
+  if (st.open) { dot.className = "dot"; txt.textContent = "Ouvert maintenant"; sub.textContent = "Jusqu'à " + fmtHM(st.until) + "."; }
+  else {
+    dot.className = "dot closed"; txt.textContent = "Fermé pour le moment";
+    if (st.next) {
+      const n = st.next, quand = n.offset === 0 ? "aujourd'hui" : n.offset === 1 ? "demain" : JOURS[n.dow];
+      sub.textContent = "Réouverture " + quand + " à " + fmtHM(n.at) + ".";
+    } else sub.textContent = "";
+  }
+  const r = rangesOf(CONFIG.horaires, now.dow);
+  $("#today-hrs").innerHTML = r.length ? r.map(x => `<span>${fmtHM(x[0])} – ${fmtHM(x[1])}</span>`).join("") : "<span>Fermé aujourd'hui</span>";
+}
+function renderMotifs() {
+  const sel = $("#f-motif"), prev = sel.value;
+  const opts = ["Choisir un motif"].concat(CONFIG.soins.map(s => s.nom), ["Autre demande"]);
+  sel.innerHTML = opts.map((o, i) => `<option value="${i === 0 ? "" : esc(o)}">${esc(o)}</option>`).join("");
+  if (prev) sel.value = prev;
+}
+function renderDays() {
+  const now = clinicNow(CONFIG.fuseau);
+  state.days = openDays(now, CONFIG.horaires, 10, CONFIG.creneauMinutes, 60);
+  const fmt = (d, o) => new Intl.DateTimeFormat("fr-FR", Object.assign({ timeZone: "UTC" }, o)).format(d);
+  $("#days").innerHTML = state.days.map(d => {
+    const wd = d.offset === 0 ? "Auj." : d.offset === 1 ? "Dem." : fmt(d.date, { weekday: "short" }).replace(".", "");
+    const full = fmt(d.date, { weekday: "long", day: "numeric", month: "long" });
+    return `<label class="chip day"><input type="radio" name="jour" value="${d.iso}" aria-label="${esc(full)}"><span><small>${esc(wd)}</small><b>${d.date.getUTCDate()}</b><small>${esc(fmt(d.date, { month: "short" }).replace(".", ""))}</small></span></label>`;
+  }).join("") || '<p class="muted">Aucun créneau en ligne pour le moment. Appelez le cabinet.</p>';
+  state.jour = null; $("#slots-set").hidden = true;
+}
+function renderSlots() {
+  const d = state.days.find(x => x.iso === state.jour);
+  if (!d) { $("#slots-set").hidden = true; return; }
+  $("#slots").innerHTML =
+    `<label class="chip"><input type="radio" name="creneau" value="" checked><span>Indifférent</span></label>` +
+    d.slots.map(t => `<label class="chip"><input type="radio" name="creneau" value="${fmtHM(t)}"><span>${fmtHM(t)}</span></label>`).join("");
+  state.creneau = ""; $("#slots-set").hidden = false;
+}
+
+/* ---------------- Formulaire ---------------- */
+function setErr(id, msg) {
+  const e = $("#e-" + id); if (!e) return;
+  e.textContent = msg || ""; e.hidden = !msg;
+  const f = { nom: "#f-nom", tel: "#f-tel", email: "#f-email" }[id];
+  if (f) { if (msg) $(f).setAttribute("aria-invalid", "true"); else $(f).removeAttribute("aria-invalid"); }
+}
+function validate(f) {
+  let first = null, ok = true;
+  const bad = (id, msg, sel) => { ok = false; setErr(id, msg); if (!first) first = $(sel); };
+  ["jour", "nom", "tel", "email", "ok"].forEach(i => setErr(i, ""));
+  if (!state.jour) bad("jour", "Choisissez un jour souhaité.", "#days input");
+  if (f.nom.value.trim().length < 2) bad("nom", "Indiquez votre nom et prénom.", "#f-nom");
+  if (!validTel(f.tel.value)) bad("tel", "Indiquez un numéro de téléphone valide, par exemple 06 92 00 00 00.", "#f-tel");
+  if (f.email.value.trim() && !validEmail(f.email.value)) bad("email", "Cette adresse e-mail semble incorrecte.", "#f-email");
+  if (!f.consentement.checked) bad("ok", "Cochez la case pour que nous puissions traiter votre demande.", "#f-ok");
+  if (first) first.focus();
+  return ok;
+}
+function summaryOf(p) {
+  return [["Motif", p.motif || "Non précisé"], ["Jour", p.jourLabel], ["Heure", p.creneau || "Indifférent"], ["Patient", p.nouveau],
+    ["Nom", p.nom], ["Téléphone", p.tel], ["E-mail", p.email || "Non renseigné"]];
+}
+function showDone(p, mode) {
+  const rows = summaryOf(p).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
+  const demo = mode === "demo";
+  $("#form-zone").innerHTML =
+    `<div class="done" role="status"><h3>${demo ? "Demande prête" : "Demande envoyée"}</h3>` +
+    (demo
+      ? `<div class="banner info">Le formulaire n'est pas encore relié à une adresse d'envoi : cette demande n'a pas été transmise au cabinet. Appelez le ${esc(CONFIG.tel)} pour prendre rendez-vous.</div>`
+      : `<p>Merci ${esc(p.nom.split(" ")[0])}. ${esc(CONFIG.delaiReponse)}</p>`) +
+    `<dl>${rows}</dl><div class="acts"><button class="btn btn-ghost btn-sm" id="copy-sum" type="button">Copier le récapitulatif</button><button class="btn btn-ghost btn-sm" id="again" type="button">Nouvelle demande</button></div></div>`;
+  $("#copy-sum").addEventListener("click", async e => {
+    const t = summaryOf(p).map(([k, v]) => k + " : " + v).join("\n");
+    try { await navigator.clipboard.writeText(t); e.target.textContent = "Copié"; } catch (_) { e.target.textContent = "Copie impossible"; }
+  });
+  $("#again").addEventListener("click", () => location.reload());
+  $("#form-zone").scrollIntoView({ block: "center" });
+}
+async function onSubmit(ev) {
+  ev.preventDefault();
+  const f = ev.target, banner = $("#form-banner"); banner.hidden = true;
+  if (f.site_web.value) return;
+  if (!validate(f)) return;
+  const d = state.days.find(x => x.iso === state.jour);
+  const jourLabel = new Intl.DateTimeFormat("fr-FR", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long" }).format(d.date);
+  const p = { cabinet: CONFIG.nom, motif: f.motif.value, jour: state.jour, jourLabel, creneau: state.creneau,
+    nouveau: f.nouveau.value, nom: f.nom.value.trim(), tel: f.tel.value.trim(), email: f.email.value.trim(), message: f.message.value.trim(),
+    consentement: true, envoyeLe: new Date().toISOString() };
+  if (!CONFIG.formEndpoint) return showDone(p, "demo");
+  const btn = $("#f-submit"); btn.disabled = true; btn.textContent = "Envoi en cours…";
+  try {
+    const r = await fetch(CONFIG.formEndpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(p) });
+    if (!r.ok) throw new Error("http " + r.status);
+    showDone(p, "ok");
+  } catch (_) {
+    btn.disabled = false; btn.textContent = "Envoyer ma demande";
+    banner.className = "banner err-b"; banner.hidden = false;
+    banner.textContent = "L'envoi n'a pas abouti. Réessayez dans un instant ou appelez le " + CONFIG.tel + ".";
+  }
+}
+
+/* ---------------- Éditeur : enregistrement local ---------------- */
+let saveT;
+function diff() {
+  const out = {};
+  Object.keys(CONFIG).forEach(k => { if (k !== "editeur" && JSON.stringify(CONFIG[k]) !== JSON.stringify(DEFAULTS[k])) out[k] = CONFIG[k]; });
+  return out;
+}
+function save() {
+  clearTimeout(saveT);
+  saveT = setTimeout(() => {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ base: BASE_HASH, diff: diff() })); }
+    catch (_) {
+      try { const d = diff(); delete d.logo; delete d.photo; localStorage.setItem(STORE_KEY, JSON.stringify({ base: BASE_HASH, diff: d })); setMsg("Les photos sont trop lourdes pour la mémoire du navigateur. Téléchargez le site avant de fermer la page."); }
+      catch (__) { /* mémoire indisponible : le téléchargement reste possible */ }
+    }
+  }, 300);
+}
+function loadLocal() {
+  try {
+    const p = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+    if (p && p.base === BASE_HASH && p.diff && typeof p.diff === "object") Object.keys(p.diff).forEach(k => { if (k in DEFAULTS && k !== "editeur") CONFIG[k] = p.diff[k]; });
+  } catch (_) { /* aucune modification enregistrée */ }
+}
+function setMsg(t) { const m = $("#cz-msg"); if (m) m.textContent = t || ""; }
+function touch(o) { refreshAll(o); save(); setMsg(""); }
+
+/* ---------------- Éditeur : composants ---------------- */
+function el(tag, attrs, kids) {
+  const e = document.createElement(tag);
+  Object.keys(attrs || {}).forEach(k => { if (k === "class") e.className = attrs[k]; else if (k === "text") e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); });
+  (kids || []).forEach(c => e.append(c));
+  return e;
+}
+function field(label, value, onInput, o) {
+  o = o || {}; const id = "czf" + (++uid);
+  const inp = o.area ? el("textarea", { id: id, rows: String(o.rows || 3) }) : el("input", { id: id, type: o.type || "text" });
+  if (o.ph) inp.placeholder = o.ph;
+  inp.value = value == null ? "" : value;
+  inp.addEventListener("input", () => onInput(inp.value));
+  return el("div", { class: "field" }, [el("label", { for: id, text: label }), inp]);
+}
+function btn(text, cls, fn) { const b = el("button", { type: "button", class: "btn btn-sm " + (cls || "btn-ghost"), text: text }); b.addEventListener("click", fn); return b; }
+function confirmBtn(text, fn) {
+  const b = btn(text, "btn-ghost", () => {
+    if (!b.dataset.armed) { b.dataset.armed = "1"; b.textContent = "Confirmer"; b._t = setTimeout(() => { delete b.dataset.armed; b.textContent = text; }, 3000); return; }
+    clearTimeout(b._t); fn();
+  });
+  return b;
+}
+function sec(title, open, kids) {
+  const d = el("details", { class: "cz-sec" }, [el("summary", { text: title }), el("div", { class: "cz-sec-body" }, kids)]);
+  if (open) d.open = true; return d;
+}
+function readImage(file, maxW, png) {
+  return new Promise((res, rej) => {
+    const fr = new FileReader(); fr.onerror = rej;
+    fr.onload = () => {
+      const im = new Image(); im.onerror = rej;
+      im.onload = () => {
+        const s = Math.min(1, maxW / im.width), c = document.createElement("canvas");
+        c.width = Math.max(1, Math.round(im.width * s)); c.height = Math.max(1, Math.round(im.height * s));
+        const g = c.getContext("2d"); if (!png) { g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); }
+        g.drawImage(im, 0, 0, c.width, c.height);
+        res(png ? c.toDataURL("image/png") : c.toDataURL("image/jpeg", 0.82));
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function imageField(label, get, set, maxW, png) {
+  const id = "czf" + (++uid);
+  const prev = el("img", { class: "thumb", alt: "" }), inp = el("input", { id: id, type: "file", accept: "image/*" });
+  const rm = btn("Retirer l'image", "btn-ghost", () => { set(""); sync(); touch({}); });
+  const sync = () => { const v = get(); prev.hidden = !v; rm.hidden = !v; if (v) prev.src = v; };
+  inp.addEventListener("change", async () => {
+    const f = inp.files && inp.files[0]; if (!f) return;
+    try { set(await readImage(f, maxW, png)); sync(); touch({}); }
+    catch (_) { setMsg("Cette image ne peut pas être lue. Essayez un fichier JPG ou PNG."); }
+    inp.value = "";
+  });
+  sync();
+  return el("div", { class: "field" }, [el("label", { for: id, text: label }), prev, inp, rm]);
+}
+function listEditor(key, fields, blank, o) {
+  o = o || {};
+  const box = el("div", { class: "list-ed" });
+  const draw = () => {
+    box.textContent = "";
+    CONFIG[key].forEach((item, i) => {
+      const card = el("div", { class: "item" });
+      fields.forEach(f => card.append(field(f.label, item[f.k], v => { item[f.k] = v; touch(o.touch); }, { area: f.area, rows: f.rows, ph: f.ph })));
+      if (o.extra) o.extra(item, card);
+      card.append(el("div", { class: "item-bar" }, [
+        btn("Monter", "btn-ghost", () => { CONFIG[key] = moveItem(CONFIG[key], i, -1); draw(); touch(o.touch); }),
+        btn("Descendre", "btn-ghost", () => { CONFIG[key] = moveItem(CONFIG[key], i, 1); draw(); touch(o.touch); }),
+        confirmBtn("Supprimer", () => { CONFIG[key].splice(i, 1); draw(); touch(o.touch); })
+      ]));
+      box.append(card);
+    });
+    box.append(btn("Ajouter", "btn-primary", () => { CONFIG[key].push(JSON.parse(JSON.stringify(blank))); draw(); touch(o.touch); }));
+  };
+  draw(); return box;
+}
+const DAYS = [["lun", "Lundi"], ["mar", "Mardi"], ["mer", "Mercredi"], ["jeu", "Jeudi"], ["ven", "Vendredi"], ["sam", "Samedi"], ["dim", "Dimanche"]];
+function hoursBlock() {
+  const box = el("div", { class: "hours-ed" });
+  const draw = () => {
+    box.textContent = "";
+    DAYS.forEach(([k, label]) => {
+      const cur = CONFIG.horaires[k] || [], f = rangesToFields(cur);
+      const cb = el("input", { type: "checkbox", id: "czh-" + k }); cb.checked = cur.length > 0;
+      const t = [0, 1, 2, 3].map(i => {
+        const x = el("input", { type: "time", "aria-label": label + (i < 2 ? " matin" : " après-midi") + (i % 2 ? ", fin" : ", début") });
+        x.value = f[i]; x.disabled = !cb.checked; return x;
+      });
+      const upd = () => { t.forEach(x => { x.disabled = !cb.checked; }); CONFIG.horaires[k] = cb.checked ? hoursToRanges(t.map(x => x.value)) : []; touch({ days: true }); };
+      cb.addEventListener("change", () => { if (cb.checked && t.every(x => !x.value)) ["08:00", "12:00", "13:30", "17:30"].forEach((v, i) => { t[i].value = v; }); upd(); });
+      t.forEach(x => x.addEventListener("input", upd));
+      box.append(el("div", { class: "hday" }, [
+        el("div", { class: "hl" }, [cb, el("label", { for: "czh-" + k, text: label + " : ouvert" })]),
+        el("div", { class: "hr" }, [el("span", { text: "Matin" }), t[0], el("span", { text: "à" }), t[1]]),
+        el("div", { class: "hr" }, [el("span", { text: "Après-midi" }), t[2], el("span", { text: "à" }), t[3]])
+      ]));
+    });
+    box.append(btn("Copier le lundi sur du mardi au vendredi", "btn-ghost", () => { ["mar", "mer", "jeu", "ven"].forEach(k => { CONFIG.horaires[k] = (CONFIG.horaires.lun || []).slice(); }); draw(); touch({ days: true }); }));
+    box.append(el("p", { class: "cz-note", text: "Laissez l'après-midi vide si le cabinet ne rouvre pas. Décochez un jour pour le marquer fermé." }));
+  };
+  draw(); return box;
+}
+const TEXTES = [
+  ["navSoins", "Menu : soins"], ["navVisite", "Menu : première visite"], ["navCabinet", "Menu : le cabinet"], ["navInfos", "Menu : infos pratiques"], ["navFaq", "Menu : questions"],
+  ["navBouton", "Bouton du menu"], ["heroBouton", "Bouton principal"], ["boutonAppel", "Bouton d'appel ({tel} = numéro)"],
+  ["aujourdhui", "Titre de la carte du jour"], ["urgence", "Message d'urgence en haut ({tel} = numéro)", 1],
+  ["soinsEyebrow", "Soins : petit titre"], ["soinsTitre", "Soins : titre"],
+  ["visiteEyebrow", "Première visite : petit titre"], ["visiteTitre", "Première visite : titre"],
+  ["cabinetEyebrow", "Cabinet : petit titre"], ["cabinetTitre", "Cabinet : titre"],
+  ["rdvEyebrow", "Rendez-vous : petit titre"], ["rdvTitre", "Rendez-vous : titre"], ["urgenceRdv", "Rendez-vous : message d'urgence ({tel} = numéro)", 1],
+  ["horairesTitre", "Titre des horaires"], ["paiementTitre", "Titre du paiement"], ["urgenceVitale", "Message d'urgence vitale", 1],
+  ["faqEyebrow", "Questions : petit titre"], ["faqTitre", "Questions : titre"]
+];
+function buildPanel() {
+  const body = $("#cz-body"); body.textContent = "";
+  const txt = (label, key, o) => field(label, CONFIG[key], v => { CONFIG[key] = v; touch(); }, o);
+  const swatches = el("div", { class: "swatches", role: "radiogroup", "aria-label": "Couleur principale" });
+  ACCENTS.forEach(a => {
+    const inp = el("input", { type: "radio", name: "cz-accent", value: a.id, "aria-label": a.nom }); inp.checked = CONFIG.accent === a.id;
+    inp.addEventListener("change", () => { CONFIG.accent = a.id; touch(); });
+    const sp = el("span"); sp.style.background = a.l; swatches.append(el("label", { class: "sw", title: a.nom }, [inp, sp]));
+  });
+  const custom = el("input", { type: "color", id: "cz-custom", value: hexToRgb(CONFIG.accentCustom) ? CONFIG.accentCustom : "#0B7A75" });
+  custom.addEventListener("input", () => { CONFIG.accent = "perso"; CONFIG.accentCustom = custom.value; $$("input[name=cz-accent]").forEach(i => { i.checked = false; }); touch(); });
+  const jsonOut = el("textarea", { id: "cz-json", readonly: "", rows: "6", "aria-label": "Configuration du site" });
+  const jsonIn = el("textarea", { id: "cz-import", rows: "4", placeholder: "Collez ici une configuration enregistrée plus tôt", "aria-label": "Configuration à importer" });
+  const refreshJson = () => { jsonOut.value = exportJson(); };
+  const modeSel = el("select", { id: "cz-mode" }, [
+    el("option", { value: "cache", text: "Caché : on l'ouvre en ajoutant #modifier à l'adresse" }),
+    el("option", { value: "visible", text: "Bouton Personnaliser visible" }),
+    el("option", { value: "off", text: "Désactivé" })
+  ]);
+  modeSel.value = exportMode; modeSel.addEventListener("change", () => { exportMode = modeSel.value; });
+  const secJson = sec("Sauvegarde et import", false, [
+    el("div", { class: "field" }, [el("label", { for: "cz-mode", text: "Dans le fichier téléchargé, l'éditeur est" }), modeSel]),
+    el("div", { class: "field" }, [el("label", { for: "cz-json", text: "Configuration (sans les images)" }), jsonOut]),
+    btn("Copier la configuration", "btn-ghost", async () => { refreshJson(); try { await navigator.clipboard.writeText(jsonOut.value); setMsg("Configuration copiée."); } catch (_) { jsonOut.focus(); jsonOut.select(); setMsg("Configuration sélectionnée : copiez-la avec le menu de votre appareil."); } }),
+    el("div", { class: "field" }, [el("label", { for: "cz-import", text: "Importer une configuration" }), jsonIn]),
+    btn("Appliquer la configuration", "btn-ghost", () => importJson(jsonIn.value))
+  ]);
+  secJson.addEventListener("toggle", () => { if (secJson.open) refreshJson(); });
+
+  body.append(
+    sec("Le cabinet", true, [
+      txt("Nom du cabinet", "nom"), txt("Métier affiché", "metier"), txt("Ville ou zone", "zone"),
+      txt("Téléphone", "tel", { type: "tel" }), txt("E-mail", "email", { type: "email" }), txt("Adresse", "adresse"),
+      txt("Accès, parking, accessibilité", "acces", { area: 1, rows: 3 })
+    ]),
+    sec("Page d'accueil", false, [
+      txt("Titre principal", "accroche", { area: 1, rows: 2 }), txt("Texte d'introduction", "intro", { area: 1, rows: 4 }),
+      txt("Message sous le formulaire", "delaiReponse", { area: 1, rows: 3 })
+    ]),
+    sec("Logo et photos", false, [
+      imageField("Logo du cabinet", () => CONFIG.logo, v => { CONFIG.logo = v; }, 400, true),
+      (() => { const c = el("input", { type: "checkbox", id: "cz-logoseul" }); c.checked = !!CONFIG.logoSeul; c.addEventListener("change", () => { CONFIG.logoSeul = c.checked; touch(); }); return el("div", { class: "hl" }, [c, el("label", { for: "cz-logoseul", text: "Afficher le logo seul, sans le nom" })]); })(),
+      imageField("Photo du cabinet (page d'accueil)", () => CONFIG.photo, v => { CONFIG.photo = v; }, 1200, false)
+    ]),
+    sec("Horaires", false, [hoursBlock()]),
+    sec("Soins", false, [listEditor("soins", [{ k: "nom", label: "Nom du soin" }, { k: "texte", label: "Description", area: 1, rows: 3 }, { k: "prix", label: "Prix (facultatif)", ph: "À partir de 60 €" }], { nom: "Nouveau soin", texte: "", prix: "" }, { touch: { motifs: true } })]),
+    sec("Première visite", false, [listEditor("parcours", [{ k: "titre", label: "Étape" }, { k: "texte", label: "Description", area: 1, rows: 3 }], { titre: "Nouvelle étape", texte: "" })]),
+    sec("Équipe", false, [listEditor("equipe", [{ k: "nom", label: "Nom" }, { k: "titre", label: "Fonction" }, { k: "bio", label: "Présentation", area: 1, rows: 4 }], { nom: "Dr Prénom Nom", titre: "Chirurgien-dentiste", bio: "" }, {
+      extra: (item, card) => card.append(imageField("Photo (facultatif)", () => item.photo || "", v => { item.photo = v; }, 300, false))
+    })]),
+    sec("Questions fréquentes", false, [listEditor("faq", [{ k: "q", label: "Question" }, { k: "r", label: "Réponse", area: 1, rows: 4 }], { q: "Nouvelle question", r: "" })]),
+    sec("Paiement et prise en charge", false, [
+      field("Un moyen par ligne", (CONFIG.paiements || []).join("\n"), v => { CONFIG.paiements = v.split("\n").map(s => s.trim()).filter(Boolean); touch(); }, { area: 1, rows: 6 })
+    ]),
+    sec("Textes du site", false, TEXTES.map(([k, label, area]) => field(label, T(k), v => { CONFIG.textes[k] = v; touch(); }, { area: !!area, rows: 2 }))),
+    sec("Sections affichées", false, [["soins", "Soins"], ["visite", "Première visite"], ["cabinet", "Le cabinet"], ["faq", "Questions fréquentes"]].map(([k, label]) => {
+      const c = el("input", { type: "checkbox", id: "czs-" + k }); c.checked = CONFIG.sections[k] !== false;
+      c.addEventListener("change", () => { CONFIG.sections[k] = c.checked; touch(); });
+      return el("div", { class: "hl" }, [c, el("label", { for: "czs-" + k, text: label })]);
+    })),
+    sec("Couleur", false, [swatches, el("div", { class: "field" }, [el("label", { for: "cz-custom", text: "Autre couleur" }), custom]), el("p", { class: "cz-note", text: "Le contraste est ajusté automatiquement pour que les textes restent lisibles." })]),
+    sec("Réception des demandes", false, [
+      txt("Adresse d'envoi du formulaire", "formEndpoint", { ph: "https://formspree.io/f/xxxxxxx" }),
+      el("p", { class: "cz-note", text: "Sans cette adresse, le formulaire reste en démonstration et n'envoie rien. Créez un formulaire gratuit chez un service d'envoi de formulaires et collez son adresse ici." })
+    ]),
+    sec("Mentions légales", false, [
+      ["raisonSociale", "Raison sociale"], ["siret", "SIRET"], ["directeurPublication", "Directeur de la publication"], ["ordre", "Conseil de l'Ordre"], ["rpps", "Numéro RPPS"], ["hebergeur", "Hébergeur du site"]
+    ].map(([k, label]) => field(label, CONFIG.legal[k], v => { CONFIG.legal[k] = v; touch(); }))),
+    secJson
+  );
+}
+
+/* ---------------- Éditeur : actions ---------------- */
+function exportJson() {
+  const c = JSON.parse(JSON.stringify(CONFIG)); delete c.editeur;
+  c.logo = ""; c.photo = ""; (c.equipe || []).forEach(p => { if (p.photo) p.photo = ""; });
+  return JSON.stringify(c, null, 2);
+}
+function importJson(text) {
+  let p; try { p = JSON.parse(text); } catch (_) { setMsg("Ce texte n'est pas une configuration valide."); return; }
+  if (!p || typeof p !== "object" || Array.isArray(p)) { setMsg("Ce texte n'est pas une configuration valide."); return; }
+  const keep = { logo: CONFIG.logo, photo: CONFIG.photo, eq: (CONFIG.equipe || []).map(x => x.photo || "") };
+  Object.keys(p).forEach(k => { if (k in DEFAULTS && k !== "editeur") CONFIG[k] = p[k]; });
+  CONFIG.textes = Object.assign({}, DEFAULTS.textes, CONFIG.textes); CONFIG.sections = Object.assign({}, DEFAULTS.sections, CONFIG.sections);
+  if (!CONFIG.logo) CONFIG.logo = keep.logo; if (!CONFIG.photo) CONFIG.photo = keep.photo;
+  (CONFIG.equipe || []).forEach((x, i) => { if (!x.photo && keep.eq[i]) x.photo = keep.eq[i]; });
+  buildPanel(); touch({ motifs: true, days: true }); setMsg("Configuration appliquée.");
+}
+function downloadSite() {
+  const cfg = JSON.parse(JSON.stringify(CONFIG)); cfg.editeur = exportMode;
+  const html = cfgReplace(ORIGINAL_HTML, cfg);
+  if (!html) { setMsg("Enregistrement impossible ici. Copiez la configuration dans « Sauvegarde et import »."); return; }
+  try {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([html], { type: "text/html" })); a.download = "index.html";
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    setMsg("Fichier index.html prêt. S'il n'apparaît pas, copiez la configuration dans « Sauvegarde et import ». Remplacez ensuite l'ancien fichier sur l'hébergeur par celui-ci.");
+  } catch (_) { setMsg("Le téléchargement a échoué. Copiez la configuration dans « Sauvegarde et import »."); }
+}
+function resetAll() {
+  try { localStorage.removeItem(STORE_KEY); } catch (_) { /* rien à effacer */ }
+  Object.keys(DEFAULTS).forEach(k => { if (k !== "editeur") CONFIG[k] = JSON.parse(JSON.stringify(DEFAULTS[k])); });
+  buildPanel(); refreshAll({ motifs: true, days: true }); setMsg("Le site est revenu à son état d'origine.");
+}
+function initEditor() {
+  const mode = CONFIG.editeur;
+  if (mode === "off") return;
+  const root = $("#cz"), panel = $("#cz-panel"), openB = $("#cz-open");
+  let built = false;
+  const show = on => {
+    if (on && !built) { buildPanel(); built = true; }
+    root.hidden = !(on || mode === "visible");
+    panel.hidden = !on; openB.hidden = on; openB.setAttribute("aria-expanded", String(on));
+    if (on) $("#cz-close").focus();
+  };
+  openB.addEventListener("click", () => show(true));
+  $("#cz-close").addEventListener("click", () => {
+    show(false);
+    if (location.hash === "#modifier") { try { history.replaceState(null, "", location.pathname + location.search); } catch (_) { /* adresse inchangée */ } }
+  });
+  $("#cz-save").addEventListener("click", downloadSite);
+  $("#cz-reset").addEventListener("click", () => {
+    const b = $("#cz-reset");
+    if (!b.dataset.armed) { b.dataset.armed = "1"; b.textContent = "Confirmer la réinitialisation"; setTimeout(() => { delete b.dataset.armed; b.textContent = "Tout réinitialiser"; }, 3000); return; }
+    delete b.dataset.armed; b.textContent = "Tout réinitialiser"; resetAll();
+  });
+  const check = () => { if (location.hash === "#modifier") show(true); };
+  window.addEventListener("hashchange", check);
+  root.hidden = mode !== "visible"; check();
+}
+function setHintDemo() {
+  const h = $("#demo-hint"), show = !CONFIG.formEndpoint && CONFIG.editeur !== "off";
+  h.hidden = !show;
+  if (show) h.textContent = "Formulaire en démonstration : renseignez l'adresse d'envoi pour recevoir les vraies demandes par e-mail.";
+}
+
+/* ---------------- Démarrage ---------------- */
+function init() {
+  if (CONFIG.editeur !== "off") loadLocal();
+  CONFIG.textes = Object.assign({}, DEFAULTS.textes, CONFIG.textes);
+  CONFIG.sections = Object.assign({}, DEFAULTS.sections, CONFIG.sections);
+  refreshAll({ motifs: true, days: true });
+  $("#days").addEventListener("change", e => { if (e.target.name === "jour") { state.jour = e.target.value; setErr("jour", ""); renderSlots(); } });
+  $("#slots").addEventListener("change", e => { if (e.target.name === "creneau") state.creneau = e.target.value; });
+  $("#rdv-form").addEventListener("submit", onSubmit);
+  $$("[data-open='mentions']").forEach(a => a.addEventListener("click", () => { $("#mentions").open = true; }));
+  initEditor();
+  setInterval(() => { renderStatus(); renderHours(); }, 60000);
+}
+init();
+</script>
+</body>
+</html>
